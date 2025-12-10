@@ -1,22 +1,47 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Mi AR</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  </head>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>MindAR Proyecto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
 
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs>
-      <a-marker type="pattern" url="pattern.patt">
-        <a-entity 
-          gltf-model="model.glb" 
-          scale="0.5 0.5 0.5">
-        </a-entity>
-      </a-marker>
+<body style="margin:0; overflow:hidden;">
 
-      <a-entity camera></a-entity>
-    </a-scene>
-  </body>
+<script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.7/dist/mindar-image-three.prod.js"></script>
+
+<script>
+const start = async () => {
+  const mindarThree = new MINDAR.IMAGE.MindARThree({
+    container: document.body,
+    imageTargetSrc: 'assets/targets.mind'
+  });
+
+  const { renderer, scene, camera } = mindarThree;
+
+  const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+  scene.add(light);
+
+  const anchor = mindarThree.addAnchor(0);
+
+  const loader = new THREE.GLTFLoader();
+  loader.load('assets/modelo.glb', (gltf) => {
+    const model = gltf.scene;
+    model.scale.set(0.4, 0.4, 0.4);
+    anchor.group.add(model);
+  });
+
+  await mindarThree.start();
+  renderer.setAnimationLoop(() => {
+    renderer.render(scene, camera);
+  });
+};
+
+start();
+</script>
+
+</body>
 </html>
+
